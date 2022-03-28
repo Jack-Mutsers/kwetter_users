@@ -20,7 +20,7 @@ public class UserService implements IUserService {
     public User getUser(UUID id) {
         Optional<User> userOptional = userRepo.findById(id);
 
-        if(userOptional == null){return new User();}
+        if(userOptional.isEmpty()){return null;}
 
         return userOptional.get();
     }
@@ -36,10 +36,11 @@ public class UserService implements IUserService {
         }
     }
 
-    public User createUser(UserForAlterationDTO userDTO) {
+    public User createUser(UserForAlterationDTO alterationDTO) {
         try{
-            User user = new User(userDTO);
+            User user = new User(alterationDTO);
             User newObject = userRepo.save(user);
+
             return newObject;
         }catch (Exception ex){
             LoggerService.warn(ex.getMessage());

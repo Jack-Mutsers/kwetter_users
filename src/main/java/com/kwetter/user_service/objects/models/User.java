@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -17,6 +17,8 @@ import java.util.UUID;
 @Entity
 public class User {
     @Id
+    @Column(name = "id", length = 36)
+    @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
     private String firstname;

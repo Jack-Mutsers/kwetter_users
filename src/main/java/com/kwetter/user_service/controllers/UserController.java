@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -21,8 +22,9 @@ public class UserController {
     private final IUserService userService = new UserService();
 
     @GetMapping(path = "/")
-    public @ResponseBody ResponseEntity<Object> getUser(HttpServletRequest request, @RequestBody UUID id){
-        User user = userService.getUser(id);
+    public @ResponseBody ResponseEntity<Object> getUser(HttpServletRequest request, @RequestBody Map<String, UUID> id_map){
+        UUID user_id = id_map.get("id");
+        User user = userService.getUser(user_id);
 
         if (user == null){
             return new ResponseEntity<>("Requested user could not be found.", HttpStatus.NOT_FOUND);
@@ -46,8 +48,8 @@ public class UserController {
 
     @PostMapping(path="/register")
     public @ResponseBody ResponseEntity<Object> createUser(@RequestBody UserForAlterationDTO alterationDTO) {
-        if(alterationDTO.validateForCreation()){
-            return new ResponseEntity<>("Incomplete data or username already exists", HttpStatus.CONFLICT);
+        if(!alterationDTO.validateForCreation()){
+            return new ResponseEntity<>("Incomplete data or user already exists", HttpStatus.CONFLICT);
         }
 
         User user = userService.createUser(alterationDTO);
@@ -59,9 +61,9 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @PutMapping(path ="/{id}")
+    @PutMapping(path ="/")
     public @ResponseBody ResponseEntity<Object> updateUserAccount(HttpServletRequest request, @RequestBody UserForAlterationDTO alterationDTO) {
-        if(alterationDTO.validateForUpdate()){
+        if(!alterationDTO.validateForUpdate()){
             return new ResponseEntity<>("Please provide valid profile details.", HttpStatus.NOT_FOUND);
         }
 
